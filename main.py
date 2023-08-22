@@ -68,4 +68,4 @@ class Blog(BaseModel):
 
 @app.post('/blog')
 def create_blog(requset: Blog):
-    return {'data': 'blog is created'}
+    return {'data': f'blog is created with title as {requset.title}'}
