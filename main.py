@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import FastAPI
 
 
@@ -18,7 +19,7 @@ def index():
 
 # set query params like /blog?limit=53
 @app.get('/blog')
-def blog(limit, published: bool):
+def blog(limit=10, published: bool = True, sort: Optional[str] = None):
     # only get 10 published blogs
     if published:
         
