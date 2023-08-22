@@ -1,6 +1,7 @@
 from typing import Optional
 from fastapi import FastAPI
 from pydantic import BaseModel
+import uvicorn
 
 # Create an instance of the FastAPI as imported above
 # uvicorn main:app 'main as the filename and app as the FastAPI instance'
@@ -64,8 +65,13 @@ def show(id: int):
 class Blog(BaseModel):
     title: str
     body: str
-    published: Optional[bool]
+    published: Optional[bool] = False
 
 @app.post('/blog')
 def create_blog(requset: Blog):
     return {'data': f'blog is created with title as {requset.title}'}
+
+# i can use 'pytho. main.py' in the debug mode for port 9000 as come under
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=9000)
+    
