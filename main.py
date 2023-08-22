@@ -18,11 +18,17 @@ def index():
 
 # set query params like /blog?limit=53
 @app.get('/blog')
-def blog(limit):
+def blog(limit, published: bool):
     # only get 10 published blogs
-    return {
-        "data": f"blogs: {limit}"
-    }
+    if published:
+        
+      return {
+          "data": f"blogs: {limit} and published: {published}"
+      }
+    else:
+        return {
+          "data": f"blogs: {limit}"
+      } 
 
 @app.get('/blog/unpublished')
 def unpublished():
