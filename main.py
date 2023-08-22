@@ -62,7 +62,9 @@ def show(id: int):
     }
 
 class Blog(BaseModel):
-    pass
+    title: str
+    body: str
+    published: Optional[bool]
 
 @app.post('/blog')
 def create_blog(requset: Blog):
