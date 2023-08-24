@@ -54,14 +54,14 @@ def update(request: schemas.Blog, id: int, db: Session = Depends(get_db)):
     return {"detail": f"Blog with id of {id} is updated!"}
 
 
-@app.get('/blog', status_code=status.HTTP_200_OK, response_model=List[schemas.showBlog])
+@app.get('/blog', status_code=status.HTTP_200_OK, response_model=List[schemas.ShowBlog])
 def all(db: Session = Depends(get_db)):
     # quereing on model
     blogs = db.query(models.Blog).all()
     return blogs
 
 
-@app.get('/blog/{id}', status_code=status.HTTP_200_OK, response_model=schemas.showBlog)
+@app.get('/blog/{id}', status_code=status.HTTP_200_OK, response_model=schemas.ShowBlog)
 def show(id: int, db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id).first()
     if not blog:

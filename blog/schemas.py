@@ -1,11 +1,13 @@
 
 from pydantic import BaseModel
 
+
 class Blog(BaseModel):
     title: str
     body: str
 
-class showBlog(BaseModel):
+
+class ShowBlog(BaseModel):
     title: str
     body: str
     # class Config():
