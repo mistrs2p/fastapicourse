@@ -2,6 +2,7 @@ from fastapi import Depends, FastAPI, HTTPException, status, Response
 from . import schemas, models
 from .database import SessionLocal, engin
 from sqlalchemy.orm import Session
+from typing import List
 app = FastAPI()
 
 # Create database or add col to the database
@@ -53,15 +54,15 @@ def update(request: schemas.Blog, id: int, db: Session = Depends(get_db)):
     return {"detail": f"Blog with id of {id} is updated!"}
 
 
-@app.get('/blog', status_code=status.HTTP_200_OK)
+@app.get('/blog', status_code=status.HTTP_200_OK, response_model=List[schemas.showBlog])
 def all(db: Session = Depends(get_db)):
     # quereing on model
     blogs = db.query(models.Blog).all()
     return blogs
 
 
-@app.get('/blog/{id}', status_code=status.HTTP_200_OK)
-def show(id: int, respone: Response,  db: Session = Depends(get_db)):
+@app.get('/blog/{id}', status_code=status.HTTP_200_OK, response_model=schemas.showBlog)
+def show(id: int, db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id).first()
     if not blog:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
