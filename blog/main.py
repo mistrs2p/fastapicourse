@@ -4,6 +4,7 @@ from .database import SessionLocal, engin
 from sqlalchemy.orm import Session
 app = FastAPI()
 
+# Create database or add col to the database
 models.Base.metadata.create_all(bind=engin)
 
 def get_db():
@@ -14,6 +15,7 @@ def get_db():
         db.close()
 
 @app.post('/blog', status_code=status.HTTP_201_CREATED)  
+# db is session that depends on database
 def create(request: schemas.Blog, db: Session = Depends(get_db)):
     new_blog = models.Blog(title=request.title, body=request.body)
     db.add(new_blog)
