@@ -71,3 +71,16 @@ def show(id: int, db: Session = Depends(get_db)):
         # respone.status_code = status.HTTP_404_NOT_FOUND
         # return {'details': f'Blog with the id {id} is not available'}
     return blog
+
+@app.post('/user')
+def create_user(request: schemas.User, db: Session = Depends(get_db)):
+    new_user = models.User(
+        name= request.name,
+        email= request.email,
+        password= request.password
+    )
+    # new_user = models.User(request)
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
