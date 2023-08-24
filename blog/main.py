@@ -23,6 +23,13 @@ def create(request: schemas.Blog, db: Session = Depends(get_db)):
     db.refresh(new_blog)
     return new_blog
 
+@app.delete('/delete/{id}', status_code=status.HTTP_204_NO_CONTENT)
+def delete(id: int, db: Session = Depends(get_db)):
+    db.query(models.Blog).filter(models.Blog.id == id).delete(synchronize_session=False)
+    db.commit()
+    return {"detail": f"Blog with id of {id} is removed!"}
+
+
 @app.get('/blog', status_code=status.HTTP_200_OK)  
 def all(db: Session = Depends(get_db)):
     # quereing on model
