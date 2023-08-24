@@ -1,11 +1,12 @@
 from fastapi import Depends, FastAPI, HTTPException, status, Response
 from . import schemas, models
-from .database import SessionLocal, engin 
+from .database import SessionLocal, engin
 from sqlalchemy.orm import Session
 app = FastAPI()
 
 # Create database or add col to the database
 models.Base.metadata.create_all(bind=engin)
+
 
 def get_db():
     db = SessionLocal()
@@ -14,7 +15,8 @@ def get_db():
     finally:
         db.close()
 
-@app.post('/blog', status_code=status.HTTP_201_CREATED)  
+
+@app.post('/blog', status_code=status.HTTP_201_CREATED)
 # db is session that depends on database
 def create(request: schemas.Blog, db: Session = Depends(get_db)):
     new_blog = models.Blog(title=request.title, body=request.body)
@@ -23,26 +25,48 @@ def create(request: schemas.Blog, db: Session = Depends(get_db)):
     db.refresh(new_blog)
     return new_blog
 
-@app.delete('/delete/{id}', status_code=status.HTTP_204_NO_CONTENT)
+
+@app.delete('/blog/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete(id: int, db: Session = Depends(get_db)):
-    db.query(models.Blog).filter(models.Blog.id == id).delete(synchronize_session=False)
+    blog = db.query(models.Blog).filter(models.Blog.id == id)
+
+    if not blog.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f'Blog with the id {id} is not available')
+    blog.delete(synchronize_session=False)
     db.commit()
     return {"detail": f"Blog with id of {id} is removed!"}
 
 
-@app.get('/blog', status_code=status.HTTP_200_OK)  
+@app.put('/blog/{id}', status_code=status.HTTP_202_ACCEPTED)
+def update(request: schemas.Blog, id: int, db: Session = Depends(get_db)):
+    # db.query(models.Blog).filter(models.Blog.id == id).update({
+    #     models.Blog.title: request.title,
+    #     models.Blog.body: request.body
+    # }, synchronize_session=False)
+    blog = db.query(models.Blog).filter(models.Blog.id == id)
+    if not blog.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f'Blog with the id {id} is not available')
+    blog.update(request)
+    db.commit()
+    return {"detail": f"Blog with id of {id} is updated!"}
+
+
+@app.get('/blog', status_code=status.HTTP_200_OK)
 def all(db: Session = Depends(get_db)):
     # quereing on model
     blogs = db.query(models.Blog).all()
     return blogs
-   
-@app.get('/blog/{id}', status_code=status.HTTP_200_OK)  
+
+
+@app.get('/blog/{id}', status_code=status.HTTP_200_OK)
 def show(id: int, respone: Response,  db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id).first()
     if not blog:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= f'Blog with the id {id} is not available')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f'Blog with the id {id} is not available')
         # Or
         # respone.status_code = status.HTTP_404_NOT_FOUND
         # return {'details': f'Blog with the id {id} is not available'}
     return blog
-   
