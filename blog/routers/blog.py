@@ -3,16 +3,16 @@ from .. import schemas, models, database
 from typing import List
 from sqlalchemy.orm import Session
 
-router = APIRouter()
+router = APIRouter(prefix='/blog', tags=['Blogs'])
 
 
-@router.get('/blog', status_code=status.HTTP_200_OK, response_model=List[schemas.ShowBlog], tags=['blogs'])
+@router.get('', status_code=status.HTTP_200_OK, response_model=List[schemas.ShowBlog])
 def all(db: Session = Depends(database.get_db)):
     # quereing on model
     blogs = db.query(models.Blog).all()
     return blogs
 
-@router.post('/blog', status_code=status.HTTP_201_CREATED, tags=['blogs'])
+@router.post('', status_code=status.HTTP_201_CREATED)
 # db is session that depends on database
 def create(request: schemas.Blog, db: Session = Depends(database.get_db)):
     new_blog = models.Blog(title=request.title, body=request.body, user_id=1)
@@ -22,7 +22,7 @@ def create(request: schemas.Blog, db: Session = Depends(database.get_db)):
     return new_blog
 
 
-@router.delete('/blog/{id}', status_code=status.HTTP_204_NO_CONTENT, tags=['blogs'])
+@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete(id: int, db: Session = Depends(database.get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id)
 
@@ -34,7 +34,7 @@ def delete(id: int, db: Session = Depends(database.get_db)):
     return {"detail": f"Blog with id of {id} is removed!"}
 
 
-@router.put('/blog/{id}', status_code=status.HTTP_202_ACCEPTED, tags=['blogs'])
+@router.put('/{id}', status_code=status.HTTP_202_ACCEPTED)
 def update(request: schemas.Blog, id: int, db: Session = Depends(database.get_db)):
     # db.query(models.Blog).filter(models.Blog.id == id).update({
     #     models.Blog.title: request.title,
@@ -50,7 +50,7 @@ def update(request: schemas.Blog, id: int, db: Session = Depends(database.get_db
 
 
 
-@router.get('/blog/{id}', status_code=status.HTTP_200_OK, response_model=schemas.ShowBlog, tags=['blogs'])
+@router.get('/{id}', status_code=status.HTTP_200_OK, response_model=schemas.ShowBlog)
 def show(id: int, db: Session = Depends(database.get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id).first()
     if not blog:
