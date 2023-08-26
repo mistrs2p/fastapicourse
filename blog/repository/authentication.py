@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import Depends, status, HTTPException
 from .. import models, database, schemas, token
 from ..hashing import Hash
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 def login(request: schemas.Login, db: Session = Depends(database.get_db)):
     user = db.query(models.User).filter(models.User.email==request.username ).first()
@@ -13,6 +13,6 @@ def login(request: schemas.Login, db: Session = Depends(database.get_db)):
     # JWT token
     access_token_expires = timedelta(minutes=token.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = token.create_access_token(
-        data={"subb": user.email}, expires_delta=access_token_expires
+        data={"sub": user.email}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
