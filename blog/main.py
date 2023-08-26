@@ -1,8 +1,9 @@
 from fastapi import Depends, FastAPI, HTTPException, status, Response
-from . import schemas, models, hashing
+from . import schemas, models
 from .database import SessionLocal, engin
 from sqlalchemy.orm import Session
 from typing import List
+from .hashing import Hash
 
 app = FastAPI()
 
@@ -80,7 +81,7 @@ def create_user(request: schemas.User, db: Session = Depends(get_db)):
     new_user = models.User(
         name= request.name,
         email= request.email,
-        password= hashing.Hash.bcrypt(request.password)
+        password= Hash.bcrypt(request.password)
     )
     # new_user = models.User(request)
     db.add(new_user)
