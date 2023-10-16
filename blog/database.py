@@ -3,10 +3,10 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm.session import sessionmaker
 # from sqlalchemy.ext.declarative import declarative_base
 SQLALCHEMY_DATABASE_URL = 'sqlite:///./blog.db'
+# SQLALCHEMY_DATABASE_URL = 'mysql+mysqlconnector://root:mistrs2P@localhost:3306/mydbuse'
 
 # create database engine
-engin = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={
-                      "check_same_thread": False})
+engin = create_engine(SQLALCHEMY_DATABASE_URL)
 
 
 # create session
