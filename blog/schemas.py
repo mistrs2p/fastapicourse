@@ -1,7 +1,7 @@
 
 from pydantic import BaseModel
 from typing import List
-
+from typing import Union
 class Blog(BaseModel):
     title: str
     body: str
@@ -34,4 +34,4 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    email: str | None = None
+    email: Union[str , None] = None
